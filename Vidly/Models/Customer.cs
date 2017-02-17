@@ -18,6 +18,7 @@ namespace Vidly.Models
         public DateTime? BirthDate { get; set; }
 
         public bool isSubscribedToNewsletter { get; set; }
+
         public MembershipType MembershipType { get; set; }
         public byte MembershipTypeId { get; set; } // treated as foreing key
     }

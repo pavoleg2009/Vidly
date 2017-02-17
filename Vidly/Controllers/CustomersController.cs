@@ -35,33 +35,16 @@ namespace Vidly.Controllers
             if (String.IsNullOrWhiteSpace(sortBy))
                 sortBy = "byName";
 
-            // var customers = GetCustomers(); 
             var customers = _context.Customers.Include(c => c.MembershipType).ToList(); // to join by foreing key. Need to use System.Data.Entity
 
-            // var viewModel = new CustomerIndexViewModel
-            // {
-            //     Customers = customers
-            // };
-
-            // return View(viewModel);
             return View(customers);
         }
 
         [Route("customers/{id}")]
         public ActionResult Get(int id)
         {
-            //var customerList = new List<Customer>
-            //{
-            //    new Customer() { Id=1, Name = "John Weak" },
-            //    new Customer() { Id=2, Name = "John Show" },
-            //    new Customer() { Id=3, Name = "Donald Trump" },
-            //    new Customer() { Id=4, Name = "Mad Max" },
-            //    new Customer() { Id=5, Name = "Dart Waider" }
-            //};
-
             var customer = _context.Customers.Include(c => c.MembershipType).SingleOrDefault(c => c.Id == id);
-            //var selectedCustomer = customerList.Find(x => x.Id.Equals(id));
-
+           
             if (customer == null)
                 return HttpNotFound();
             
@@ -69,18 +52,5 @@ namespace Vidly.Controllers
 
         }
 
-        //private IEnumerable<Customer> GetCustomers()
-        //{
-        //    return new List<Customer>
-        //    {
-        //        new Customer() { Id=1, Name = "John Weak" },
-        //        new Customer() { Id=2, Name = "John Show" },
-        //        new Customer() { Id=3, Name = "Donald Trump" },
-        //        new Customer() { Id=4, Name = "Mad Max" },
-        //        new Customer() { Id=5, Name = "Dart Waider" }
-        //    };
-
-        //    //Get 
-        //}
     }
 }

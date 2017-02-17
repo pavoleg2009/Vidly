@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Entity;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -11,6 +12,19 @@ namespace Vidly.Controllers
 {
     public class MoviesController : Controller 
     {
+        private ApplicationDbContext _context;
+
+        public MoviesController()
+        {
+            _context = new ApplicationDbContext();
+        }
+
+        protected override void Dispose(bool disposing)
+        {   
+            _context.Dispose();
+            // base.Dispose(disposing);
+        }
+
         // GET: Movies/Random
         public ActionResult Random() // good practice to change to ViewResult - for unit testing
         {
@@ -49,51 +63,19 @@ namespace Vidly.Controllers
             if (String.IsNullOrWhiteSpace(sortBy))
                 sortBy = "name";
 
-            var movieList = new List<Movie>
-            {
-                new Movie {Name = "Shrack", Id=1},
-                new Movie {Name = "Walle-E", Id=2},
-                new Movie {Name = "Die Hard", Id=3},
-                new Movie {Name = "Games ot Throne", Id=4},
-                new Movie {Name = "Batman", Id=5}
-            };
- 
-
-            var viewModel = new MovieIndexViewModel
-            {
-                Movies = movieList
-            };
-
-            return View(viewModel);
+            var movies = _context.Movies.Include(m => m.Genre).ToList();
+            return View(movies);
         }
 
         [Route("movies/{id}")]
         public ActionResult Get(int id)
         {
 
-            var movieList = new List<Movie>
-            {
-                new Movie {Name = "Shrack", Id=1},
-                new Movie {Name = "Walle-E", Id=2},
-                new Movie {Name = "Die Hard", Id=3},
-                new Movie {Name = "Games ot Throne", Id=4},
-                new Movie {Name = "Batman", Id=5}
-            };
-
-            var selectedMovie = movieList.Find(x => x.Id.Equals(id));
-
-            if (selectedMovie != null)
-            {
-                var viewModel = new MovieGewViewModel
-                {
-                    Movie = selectedMovie
-                };
-                return View(viewModel);
-            }
-            else
-            {
+            var movie = _context.Movies.Include(m => m.Genre).SingleOrDefault(m => m.Id == id);
+            if (movie == null)
                 return HttpNotFound();
-            }
+
+            return View(movie);
         }
 
         [Route("movies/released/{year:regex(\\d{4})}/{month:range(1, 12)}")] // possible COnstraints: min, max, minlength, maxlength, int, float, guid 
