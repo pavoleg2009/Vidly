@@ -243,9 +243,17 @@
     <Compile Include="Migrations\201702171719037_PriorToMoveisTableRefactoring.Designer.cs">
       <DependentUpon>201702171719037_PriorToMoveisTableRefactoring.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201702171748281_test.cs" />
-    <Compile Include="Migrations\201702171748281_test.Designer.cs">
-      <DependentUpon>201702171748281_test.cs</DependentUpon>
+    <Compile Include="Migrations\201702171756498_FixMoviesData.cs" />
+    <Compile Include="Migrations\201702171756498_FixMoviesData.Designer.cs">
+      <DependentUpon>201702171756498_FixMoviesData.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201702172107199_IsSubscribedFieldOfCustomerRenamed.cs" />
+    <Compile Include="Migrations\201702172107199_IsSubscribedFieldOfCustomerRenamed.Designer.cs">
+      <DependentUpon>201702172107199_IsSubscribedFieldOfCustomerRenamed.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201702182245077_RemoveRequiredFromMovieId.cs" />
+    <Compile Include="Migrations\201702182245077_RemoveRequiredFromMovieId.Designer.cs">
+      <DependentUpon>201702182245077_RemoveRequiredFromMovieId.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -261,6 +269,8 @@
     <Compile Include="ViewModels\CustomerIndexViewModel.cs" />
     <Compile Include="ViewModels\MovieGewViewModel.cs" />
     <Compile Include="ViewModels\MovieIndexViewModel.cs" />
+    <Compile Include="ViewModels\NewCostomerViewModel.cs" />
+    <Compile Include="ViewModels\NewMovieViewModel.cs" />
     <Compile Include="ViewModels\RandomMovieViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -321,9 +331,10 @@
     <Content Include="Views\Movies\Random.cshtml" />
     <Content Include="Views\Shared\_NavBar.cshtml" />
     <Content Include="Views\Movies\Index.cshtml" />
-    <Content Include="Views\Movies\Get.cshtml" />
+    <Content Include="Views\Movies\MovieForm.cshtml" />
     <Content Include="Views\Customers\Index.cshtml" />
     <Content Include="Views\Customers\Get.cshtml" />
+    <Content Include="Views\Customers\CustomerForm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -388,8 +399,14 @@
     <EmbeddedResource Include="Migrations\201702171719037_PriorToMoveisTableRefactoring.resx">
       <DependentUpon>201702171719037_PriorToMoveisTableRefactoring.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201702171748281_test.resx">
-      <DependentUpon>201702171748281_test.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201702171756498_FixMoviesData.resx">
+      <DependentUpon>201702171756498_FixMoviesData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702172107199_IsSubscribedFieldOfCustomerRenamed.resx">
+      <DependentUpon>201702172107199_IsSubscribedFieldOfCustomerRenamed.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702182245077_RemoveRequiredFromMovieId.resx">
+      <DependentUpon>201702182245077_RemoveRequiredFromMovieId.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

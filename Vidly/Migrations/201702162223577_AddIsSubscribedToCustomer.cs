@@ -7,12 +7,12 @@ namespace Vidly.Migrations
     {
         public override void Up()
         {
-            AddColumn("dbo.Customers", "isSubscribedToNewsletter", c => c.Boolean(nullable: false));
+            AddColumn("dbo.Customers", "IsSubscribedToNewsletter", c => c.Boolean(nullable: false));
         }
         
         public override void Down()
         {
-            DropColumn("dbo.Customers", "isSubscribedToNewsletter");
+            DropColumn("dbo.Customers", "IsSubscribedToNewsletter");
         }
     }
 }
