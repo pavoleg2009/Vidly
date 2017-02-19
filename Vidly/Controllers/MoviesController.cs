@@ -30,10 +30,11 @@ namespace Vidly.Controllers
         public ActionResult New()
         {
             var genres = _context.Genres.ToList();
+
             var viewModel = new NewMovieViewModel
             {
+                Movie = new Movie(),
                 Genres = genres
-
             };
 
             return View("MovieForm", viewModel);
@@ -58,10 +59,19 @@ namespace Vidly.Controllers
         [HttpPost]
         public ActionResult Save(Movie movie)
         {
+            if (!ModelState.IsValid)
+            {
+                var viewModel = new NewMovieViewModel
+                {
+                    Movie = movie,
+                    Genres = _context.Genres.ToList()
+                };
+                return View("MovieForm", viewModel);
+            }
+
             if (movie.Id == 0)
             {
                 movie.DateAdded = DateTime.Now;
-                //movie.ReleaseDate = DateTime.Now;
                 _context.Movies.Add(movie);
             }
                 
@@ -70,27 +80,15 @@ namespace Vidly.Controllers
                 var movieInDb = _context.Movies.Single(m => m.Id == movie.Id);
 
                 movieInDb.Name = movie.Name;
-                movieInDb.DateAdded = movie.DateAdded;
                 movieInDb.ReleaseDate = movie.ReleaseDate;
                 movieInDb.GenreId = movie.GenreId;
                 movieInDb.NumberInStock = movie.NumberInStock;
-
-
             }
 
             Console.WriteLine(movie);
 
-            //try
-            //{
-                _context.SaveChanges();
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine(e);
+            _context.SaveChanges();
 
-            //}
-
-            
             return RedirectToAction("Index", "Movies");
         }
 
@@ -113,10 +111,6 @@ namespace Vidly.Controllers
 
             return View(viewModel);
 
-            //  return View(movie);
-            // return Content("Hello");
-            // return HttpNotFound();
-            // return RedirectToAction("Index", "Home", new {page = 1, sortBy = "name"});
         }
 
         [Route("movies")]
