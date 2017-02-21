@@ -23,9 +23,11 @@ namespace Vidly.Models
         [Required]
         public int GenreId { get; set; }
 
+
         public DateTime DateAdded { get; set; }
 
         [Display(Name = "Release Date")]
+        [DataType(DataType.Date)]
         public DateTime ReleaseDate { get; set; }
 
         [Display(Name = "Number in Stock")]
