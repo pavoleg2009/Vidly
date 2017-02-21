@@ -8,7 +8,7 @@ using Vidly.Models;
 
 namespace Vidly.ViewModels
 {
-    public class NewMovieViewModel
+    public class MovieFormViewModel
     {
         public int? Id { get; set; }
 
@@ -41,11 +41,12 @@ namespace Vidly.ViewModels
         //    get { return Id != 0 ? "Edit Movie" : "New Movie"; }
         //}
 
-        public NewMovieViewModel()
+        public MovieFormViewModel()
         {
             Id = 0;
         }
-        public NewMovieViewModel(Movie movie)
+
+        public MovieFormViewModel(Movie movie)
         {
             Id = movie.Id;
             Name = movie.Name;

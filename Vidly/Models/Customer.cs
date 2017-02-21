@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using Antlr.Runtime;
 
 namespace Vidly.Models
 {
@@ -15,7 +16,10 @@ namespace Vidly.Models
         public string Name { get; set; }
 
         [Display(Name = "Date of Birth")]
-        [Min18YearsIfAMember]
+        //[DisplayFormat(ApplyFormatInEditMode = false, DataFormatString = "{0:dd'/'MM'/'yyyy}")]
+        //[Min18YearsIfAMember]
+        //[DataType(DataType.Date)]
+        
         public DateTime? BirthDate { get; set; }
 
         public bool IsSubscribedToNewsletter { get; set; }
