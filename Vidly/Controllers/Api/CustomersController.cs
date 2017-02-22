@@ -26,28 +26,29 @@ namespace Vidly.Controllers.Api
         }
 
         // GET /api/customers
-        public IEnumerable<CustomerDto> GetCustomers()
+        public IHttpActionResult GetCustomers()
+        //public IEnumerable<CustomerDto> GetCustomers()
         {
-            return _context.Customers.ToList().Select(mapperCustomerToDto.Map<Customer, CustomerDto>);
+            return Ok(_context.Customers.ToList().Select(mapperCustomerToDto.Map<Customer, CustomerDto>));
         }
 
         // GET /api/customers/id
-        public CustomerDto GetCostomer(int id)
+        public IHttpActionResult GetCostomer(int id)
         {
 
             var customer = _context.Customers.SingleOrDefault(c => c.Id == id);
             if (customer == null)
-                throw new HttpResponseException(HttpStatusCode.NotFound);
+                return NotFound();
 
-            return mapperCustomerToDto.Map<Customer, CustomerDto>(customer);
+            return Ok(mapperCustomerToDto.Map<Customer, CustomerDto>(customer));
         }
 
         // POST /api/customers
         [HttpPost]
-        public CustomerDto CreateCostomer(CustomerDto customerDto) // PostCustom method name don't requires [HttpPost]
+        public IHttpActionResult CreateCustomer(CustomerDto customerDto) // PostCustom method name don't requires [HttpPost]
         {
             if (!ModelState.IsValid)
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
+                return BadRequest();
 
             var customer = mapperDtoToCustomer.Map<CustomerDto, Customer>(customerDto);
             _context.Customers.Add(customer);
@@ -55,19 +56,19 @@ namespace Vidly.Controllers.Api
 
             customerDto.Id = customer.Id;
 
-            return customerDto;
+            return Created(new Uri(Request.RequestUri + "/" + customer.Id), customerDto);
         }
 
         // PUT /api/customers/id
         [HttpPut]
-        public CustomerDto UpdateCustomer(int id, CustomerDto customerDto)
+        public IHttpActionResult UpdateCustomer(int id, CustomerDto customerDto)
         {
             if (!ModelState.IsValid)
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
+                return BadRequest("Data object is Invalid");
 
             var customerInDb = _context.Customers.SingleOrDefault(c => c.Id == id);
             if (customerInDb == null)
-                throw new HttpResponseException(HttpStatusCode.NotFound);
+                return NotFound();
 
             mapperDtoToCustomer.Map<CustomerDto, Customer>(customerDto, customerInDb);
 
@@ -75,26 +76,28 @@ namespace Vidly.Controllers.Api
 
             var updatedCustomer = _context.Customers.SingleOrDefault(c => c.Id == id);
             if (updatedCustomer == null)
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
+                return BadRequest();
 
-            return mapperCustomerToDto.Map<Customer, CustomerDto>(updatedCustomer);
+            return Ok(mapperCustomerToDto.Map<Customer, CustomerDto>(updatedCustomer));
 
         }
 
         // Delete /api/customers/id
         [HttpDelete]
-        public void DeleteCustomer(int id)
+        public IHttpActionResult DeleteCustomer(int id)
         {
             var customerInDb = _context.Customers.SingleOrDefault(c => c.Id == id);
             if (customerInDb == null)
-                throw new HttpResponseException(HttpStatusCode.NotFound);
+                return NotFound();
 
             _context.Customers.Remove(customerInDb);
             _context.SaveChanges();
 
             var deletedCustomer = _context.Customers.SingleOrDefault(c => c.Id == id);
             if (deletedCustomer != null)
-                throw new HttpResponseException(HttpStatusCode.Found);
+                return NotFound();
+
+            return Ok("Record Deleted");
             
         }
     }

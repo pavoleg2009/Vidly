@@ -13,6 +13,10 @@ namespace Vidly.App_Start
     {
         public static IMapper mapperCustomerToDto;
         public static IMapper mapperDtoToCustomer;
+
+        public static IMapper mapperMovieToDto;
+        public static IMapper mapperDtoToMovie;
+
         public MappingProfile()
         {
 
@@ -23,10 +27,22 @@ namespace Vidly.App_Start
             mapperCustomerToDto = configCustomerToDto.CreateMapper();
 
             var configDtoToCustomer = new MapperConfiguration(cfg => {
-                cfg.CreateMap<CustomerDto, Customer>();
+                cfg.CreateMap<CustomerDto, Customer>().ForMember(c => c.Id, opt => opt.Ignore());
             });
 
             mapperDtoToCustomer = configDtoToCustomer.CreateMapper();
+
+            var configMovieToDto = new MapperConfiguration(cfg => {
+                cfg.CreateMap<Movie, MovieDto>();
+            });
+
+            mapperMovieToDto = configMovieToDto.CreateMapper();
+
+            var configDtoToMovie = new MapperConfiguration(cfg => {
+                cfg.CreateMap<MovieDto, Movie>().ForMember(m => m.Id, opt => opt.Ignore());
+            });
+
+            mapperDtoToMovie = configDtoToMovie.CreateMapper();
             
         }
     }
