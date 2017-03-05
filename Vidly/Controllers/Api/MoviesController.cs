@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity.Core.Objects;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Vidly.DTOs;
 using Vidly.Models;
 using static Vidly.App_Start.MappingProfile;
@@ -28,7 +31,12 @@ namespace Vidly.Controllers.Api
         // GET /api/movies
         public IHttpActionResult GetMovies()
         {
-            return Ok(_context.Movies.ToList().Select(mapperMovieToDto.Map<Movie, MovieDto>));
+            return Ok(_context
+                .Movies
+                .Include(m => m.Genre)
+                .ToList()
+                //.Select(Mapper.Map<Movie, MovieDto>)
+                );
         }
 
         // GET /api/movies/id
@@ -38,7 +46,7 @@ namespace Vidly.Controllers.Api
             if (movie == null)
                 return NotFound();
 
-            return Ok(mapperMovieToDto.Map<Movie, MovieDto>(movie));
+            return Ok(Mapper.Map<Movie, MovieDto>(movie));
         }
 
         // POST /api/movies
@@ -48,7 +56,7 @@ namespace Vidly.Controllers.Api
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var movie = mapperDtoToMovie.Map<MovieDto, Movie>(MovieDto);
+            var movie = Mapper.Map<MovieDto, Movie>(MovieDto);
             _context.Movies.Add(movie);
             _context.SaveChanges();
 
@@ -68,7 +76,7 @@ namespace Vidly.Controllers.Api
             if (movieInDb == null)
                 return NotFound();
 
-            mapperDtoToMovie.Map<MovieDto, Movie>(MovieDto, movieInDb);
+            Mapper.Map<MovieDto, Movie>(MovieDto, movieInDb);
 
             _context.SaveChanges();
 
@@ -76,7 +84,7 @@ namespace Vidly.Controllers.Api
             if (updatedMovie == null)
                 return BadRequest();
 
-            return Ok(mapperMovieToDto.Map<Movie, MovieDto>(updatedMovie));
+            return Ok(Mapper.Map<Movie, MovieDto>(updatedMovie));
 
         }
 

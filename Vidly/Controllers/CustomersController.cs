@@ -20,16 +20,13 @@ namespace Vidly.Controllers
             _context.Dispose();
         }
 
-        public ActionResult Index(int? pageIndex, string sortBy)
+        public ActionResult Index()
         {
-            if (!pageIndex.HasValue)
-                pageIndex = 1;
-            if (string.IsNullOrWhiteSpace(sortBy))
-                sortBy = "byName";
 
-            var customers = _context.Customers.Include(c => c.MembershipType).ToList();
-                // to join by foreing key. Need to use System.Data.Entity
-            return View(customers);
+            //var customers = _context.Customers.Include(c => c.MembershipType).ToList();
+            //    // to join by foreing key. Need to use System.Data.Entity
+            //return View(customers);
+            return View();
         }
 
         public ActionResult New()

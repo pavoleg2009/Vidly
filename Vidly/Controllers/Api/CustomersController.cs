@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -29,18 +31,26 @@ namespace Vidly.Controllers.Api
         public IHttpActionResult GetCustomers()
         //public IEnumerable<CustomerDto> GetCustomers()
         {
-            return Ok(_context.Customers.ToList().Select(mapperCustomerToDto.Map<Customer, CustomerDto>));
+            var customerDtos = _context
+                .Customers
+                .Include(c => c.MembershipType)
+                .ToList()
+                .Select(mapper.Map<Customer, CustomerDto>)
+            ;
+
+            return Ok(customerDtos);
         }
 
         // GET /api/customers/id
         public IHttpActionResult GetCostomer(int id)
         {
 
-            var customer = _context.Customers.SingleOrDefault(c => c.Id == id);
+            var customer = _context.Customers
+                .Include(c => c.MembershipType)
+                .SingleOrDefault(c => c.Id == id);
             if (customer == null)
                 return NotFound();
-
-            return Ok(mapperCustomerToDto.Map<Customer, CustomerDto>(customer));
+            return Ok(mapper.Map<Customer, CustomerDto>(customer));
         }
 
         // POST /api/customers
@@ -50,7 +60,7 @@ namespace Vidly.Controllers.Api
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var customer = mapperDtoToCustomer.Map<CustomerDto, Customer>(customerDto);
+            var customer = mapper.Map<CustomerDto, Customer>(customerDto);
             _context.Customers.Add(customer);
             _context.SaveChanges();
 
@@ -70,7 +80,7 @@ namespace Vidly.Controllers.Api
             if (customerInDb == null)
                 return NotFound();
 
-            mapperDtoToCustomer.Map<CustomerDto, Customer>(customerDto, customerInDb);
+            Mapper.Map<CustomerDto, Customer>(customerDto, customerInDb);
 
             _context.SaveChanges();
 
@@ -78,7 +88,7 @@ namespace Vidly.Controllers.Api
             if (updatedCustomer == null)
                 return BadRequest();
 
-            return Ok(mapperCustomerToDto.Map<Customer, CustomerDto>(updatedCustomer));
+            return Ok(Mapper.Map<Customer, CustomerDto>(updatedCustomer));
 
         }
 

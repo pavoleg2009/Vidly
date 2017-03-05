@@ -14,13 +14,16 @@ namespace Vidly
     public class MvcApplication : System.Web.HttpApplication
     {
         protected void Application_Start()
-        {   
-            Mapper.Initialize(c => c.AddProfile<MappingProfile>());
+        {
+            Mapper.Initialize(cfg => cfg.AddProfile<MappingProfile>());
+
             GlobalConfiguration.Configure(WebApiConfig.Register);
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            
         }
     }
 }
