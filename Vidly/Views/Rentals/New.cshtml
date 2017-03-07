@@ -1,0 +1,135 @@
+﻿@model dynamic
+@{
+    ViewBag.Title = "New Rental Form";
+}
+
+<h2>New Rental Form</h2>
+
+<form id="newRental">
+    <div class="form-group">
+        <label>Customer</label>
+        <div class="tt-container">
+            <input id="customer" data-rule-validCustomer required type="text" name="customer" value="" class="form-control"/>
+        </div>
+
+    </div>
+    <div class="form-group">
+        <label>Movie</label>
+        <div class="tt-container">
+            <input id="movie" data-rule-atLeastOneMovie required type="text" name="movie" value="" class="form-control"/>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 col-sm-4">
+            <ul id="movies" class="list-group"></ul>
+        </div>
+    </div>
+
+    <button class="btn btn-primary">Submit</button>
+
+
+</form>
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        $(document).ready(function() {
+
+            var viewModel = {
+                MoviesId: []
+            };
+
+            var customers = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                remote: {
+                    url: '/api/customers?query=%QUERY',
+                    wildcard: '%QUERY'
+                }
+            });
+
+            $('#customer').typeahead({
+                        minLength: 2,
+                        highlight: true
+                    },
+                    {
+                        name: 'customers',
+                        display: 'name',
+                        source: customers
+                    })
+                .on("typeahead:select",
+                    function(event, customer) {
+                        viewModel.CustomerId = customer.id;
+                    });
+
+            var movies = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                remote: {
+                    url: '/api/movies?query=%QUERY',
+                    wildcard: '%QUERY'
+                }
+            });
+
+            $('#movie').typeahead({
+                        minLength: 2,
+                        highlight: true
+                    },
+                    {
+                        name: 'movies',
+                        display: 'name',
+                        source: movies
+                    })
+                .on("typeahead:select",
+                    function(event, movie) {
+                        $("#movies").append("<li class='list-group-item'>" + movie.name + "</li>");
+                        viewModel.MoviesId.push(movie.id);
+                    });
+
+            $.validator.addMethod("validCustomer",
+                function() {
+                    return viewModel.CustomerId && viewModel.CustomerId !== 0;
+                },
+                "Please select a valid customer");
+
+            $.validator.addMethod("atLeastOneMovie",
+                function() {
+                    return viewModel.MoviesId && viewModel.MoviesId.count > 0;
+                },
+                "Please select at list one movie");
+
+            $("#newRental").validate({
+                submitHandler: function() {
+
+                    console.log("Validated");
+
+
+                    $.ajax({
+                            url: "/api/newRentals",
+                            method: "post",
+                            data: viewModel
+                        })
+                        .done(function() {
+
+                            toastr.success("Rentals successfully recorded");
+                            $('#customer').val("");
+                            $('#movie').val("");
+                            $("#movies").empty();
+                            viewModel = { MoviesId: [] };
+                        })
+                        .fail(function() {
+                            toastr.error("Error saving rentals");
+                        });
+
+                    return false;
+                }
+            });
+
+        });
+
+
+    </script>
+}

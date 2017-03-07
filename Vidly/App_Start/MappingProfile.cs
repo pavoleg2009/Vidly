@@ -30,9 +30,6 @@ namespace Vidly.App_Start
             });
             mapper = config.CreateMapper();
 
-
-
-
             //Mapper.Initialize(cfg =>
             //{
 

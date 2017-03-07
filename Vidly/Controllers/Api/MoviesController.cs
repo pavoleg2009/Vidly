@@ -29,45 +29,53 @@ namespace Vidly.Controllers.Api
         }
 
         // GET /api/movies
-        public IHttpActionResult GetMovies()
+        public IHttpActionResult GetMovies(string query = null)
         {
-            return Ok(_context
-                .Movies
+            var moviesQuery = _context.Movies
                 .Include(m => m.Genre)
+                .Where(m => m.NumberAvailable > 0);
+
+            if (!String.IsNullOrWhiteSpace(query))
+                moviesQuery = moviesQuery.Where(m => m.Name.Contains(query));
+            var movieDtos = moviesQuery
                 .ToList()
-                //.Select(Mapper.Map<Movie, MovieDto>)
-                );
+                .Select(mapper.Map<Movie, MovieDto>);
+            return Ok(movieDtos);
+
         }
 
         // GET /api/movies/id
         public IHttpActionResult GetMovie(int id)
         {
-            var movie = _context.Movies.SingleOrDefault(c => c.Id == id);
+            var movie = _context.Movies
+                .Include(m => m.Genre)
+                .SingleOrDefault(c => c.Id == id);
             if (movie == null)
                 return NotFound();
 
-            return Ok(Mapper.Map<Movie, MovieDto>(movie));
+            return Ok(mapper.Map<Movie, MovieDto>(movie));
         }
 
         // POST /api/movies
         [HttpPost]
-        public IHttpActionResult CreateMovie(MovieDto MovieDto) // PostCustom method name don't requires [HttpPost]
+        public IHttpActionResult CreateMovie(MovieDto movieDto) // Post Custom method name don't requires [HttpPost]
         {
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var movie = Mapper.Map<MovieDto, Movie>(MovieDto);
+            var movie = mapper.Map<MovieDto, Movie>(movieDto);
+            movie.DateAdded = DateTime.Now;
             _context.Movies.Add(movie);
             _context.SaveChanges();
 
-            MovieDto.Id = movie.Id;
+            movieDto.Id = movie.Id;
 
-            return Created(new Uri(Request.RequestUri + "/" + movie.Id), MovieDto);
+            return Created(new Uri(Request.RequestUri + "/" + movie.Id), movieDto);
         }
 
         // PUT /api/movies/id
         [HttpPut]
-        public IHttpActionResult UpdateMovie(int id, MovieDto MovieDto)
+        public IHttpActionResult UpdateMovie(int id, MovieDto movieDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest("Data object is Invalid");
@@ -76,7 +84,7 @@ namespace Vidly.Controllers.Api
             if (movieInDb == null)
                 return NotFound();
 
-            Mapper.Map<MovieDto, Movie>(MovieDto, movieInDb);
+            mapper.Map<MovieDto, Movie>(movieDto, movieInDb);
 
             _context.SaveChanges();
 
@@ -84,7 +92,7 @@ namespace Vidly.Controllers.Api
             if (updatedMovie == null)
                 return BadRequest();
 
-            return Ok(Mapper.Map<Movie, MovieDto>(updatedMovie));
+            return Ok(mapper.Map<Movie, MovieDto>(updatedMovie));
 
         }
 
